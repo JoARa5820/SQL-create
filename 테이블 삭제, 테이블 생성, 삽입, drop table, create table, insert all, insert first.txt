@@ -1,0 +1,43 @@
+[106]
+사원들의 급여가 5000 미만일 경우 employee_id, salary 정보를 SPECIAL_SAL 테이블에 입력하고 
+아니면 employee_id, hire_date, salary정보를 SAL_HISTORY 테이블에 입력하고 
+또는  employee_id, manager_id, salary 정보를  MGR_HISTORY 테이블에 입력한다.
+
+[Answer]
+
+drop table special_sal purge;
+drop table sal_history purge;
+drop table mgr_history purge;
+
+create table special_sal(id number, sal number);
+create table sal_history(id number, hire_date date, sal number);
+create table mgr_history(id number, mgr number, sal number);
+
+insert all
+when sal < 5000 then
+into special_sal values (empid, sal) --# special_sal(컬럼리스트 나열하는 습관)
+else
+into sal_history values(empid,hiredate,sal)
+into mgr_history values(empid,mgr,sal)
+select employee_id empid, hire_date hiredate, salary sal, manager_id mgr
+from employees;
+
+select * from special_sal;
+select * from sal_history;
+select * from mgr_history;
+
+rollback;
+
+insert first
+when sal < 5000 then
+into special_sal values (empid, sal)
+else
+into sal_history values(empid,hiredate,sal)
+into mgr_history values(empid,mgr,sal)
+select employee_id empid, hire_date hiredate, salary sal, manager_id mgr
+from employees;
+
+select * from special_sal;
+select * from sal_history;
+select * from mgr_history;
+rollback;

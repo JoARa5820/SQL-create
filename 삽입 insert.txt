@@ -1,0 +1,20 @@
+[96]
+hr.departments 테이블의 department_id, department_name, manager_id 데이터를 insa 유저의 dept 테이블로 insert 한후 영구히 저장하세요.
+
+[Answer]
+
+insert into dept(dept_id, dept_name, mgr) --# insert로 데이터를 가져올때는 윗줄과 아래줄의 컬럼의 개수와 타입이 맞아야한다.
+select department_id, department_name, manager_id from hr.departments;
+
+commit;
+
+
+
+[97]
+hr.employees 테이블의 employee_id, last_name, hire_date, salary, manager_id, department_id 데이터를 insa 유저의 emp 테이블로 insert 한후 영구히 저장하세요.
+
+[Answer]
+
+insert into emp(id, name, hire_date, sal, mgr, dept_id)
+select employee_id, last_name, hire_date, salary, manager_id, department_id from hr.employees;
+commit;

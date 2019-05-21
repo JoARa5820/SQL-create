@@ -1,0 +1,11 @@
+[98]
+insa유저의 dept 테이블의 부서정보 중에 소속사원이 없는 부서정보를 삭제한 후 영구히 저장하세요.
+
+[Answer]
+
+delete from dept d
+where not exists (select 'x' from emp where dept_id = d.dept_id);
+
+select * from dept;
+
+commit;

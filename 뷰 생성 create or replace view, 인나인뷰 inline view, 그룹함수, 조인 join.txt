@@ -1,0 +1,18 @@
+[108]
+부서이름별 총액급여, 평균급여, 최고급여, 최저급여를
+출력하는 query문을 작성한 후, dept_sal_vw view를 생성하세요.
+
+[Answer]
+
+create or replace view dept_sal_vw
+as select d.department_name, e.total_sal, e.avg_sal, e.max_sal, e.min_sal
+from (select department_id, sum(salary) total_sal, trunc(avg(salary),1) avg_sal, max(salary) max_sal, min(salary) min_sal
+from employees
+group by department_id) e, departments d
+where d.department_id = e.department_id;
+
+select * from dept_sal_vw;
+
+--# 복합뷰 : 디엠엘은 안됨
+--# 인나인뷰 안에 인나인뷰 안에 인나인뷰...
+--# 인나인뷰 쓰는 이유 : 조인의 일 양을 줄이기 위해

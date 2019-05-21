@@ -1,0 +1,15 @@
+[92]
+insa 유저가 사용할 수 있는 users tablespace quota 값을 unlimited로 수정하세요.
+
+[Answer]
+
+alter user insa			--# alter user 유저이름 quota unlimited on users;
+quota unlimited on users;
+
+
+<유저입장에서 확인>
+: select * from user_ts_quotas; :tablespace를 사용할 수 있는 권한(저장공간)
+
+<DBA입장에서 확인>
+select * from dba_users;
+select * from dba_ts_quotas;  --# 어떤 쿼터값을 사용할 수 있는지, 쿼터값 확인하기

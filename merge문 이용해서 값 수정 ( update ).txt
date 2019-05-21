@@ -1,0 +1,35 @@
+[104]
+DEPARTMENTS 테이블에 있는 department_name을 기준으로 EMP_COPY 테이블에 department_name에 값을 수정하세요.
+단 MERGE문을 이용해서 해결한 후  수정된 정보를 영구히 저장하세요.
+
+[Answer]
+
+merge into emp_copy e
+using departments d
+on (e.department_id = d.department_id)
+when matched then
+	    update set
+	    	e.department_name = d.department_name ;
+
+select department_id, department_name from emp_copy;
+
+commit;
+
+
+
+[105]
+EMP_COPY 테이블에 department_name에 값을 NULL 값으로 수정하세요. 
+단 MERGE문을 이용해서 해결한 후 ROLLBACK 하세요.
+
+[Answer]
+
+merge into emp_copy e
+using departments d
+on (e.department_id = d.department_id)
+when matched then
+    update set
+    	e.department_name = null ;
+
+select department_id, department_name from emp_copy;
+
+rollback;

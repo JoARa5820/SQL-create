@@ -1,0 +1,97 @@
+[107]
+emp.csv 파일의 데이터를 분석하려고 한다. external table를 생성하세요.
+
+[Answer]
+
+1. DBA 접속
+drop directory data_dir;
+create directory data_dir as 'c:\data\';
+select * from dba_directories where directory_name = 'DATA_DIR';
+grant read, write on directory data_dir to hr;
+revoke read, write on directory data_dir from hr;
+
+
+2. HR 접속
+select * from user_tab_privs where table_name = 'DATA_DIR';
+
+select * from all_directories where directory_name = 'DATA_DIR';
+
+drop table empext purge;
+
+create table hr.empext
+(id  number, 
+name varchar2(25), 
+hire_date date,   
+job_id varchar2(10),
+sal number,  
+dept_id number)      
+      organization external      
+      (      
+       type oracle_loader      
+       default directory data_dir      
+       access parameters      
+       (      
+         records delimited by newline      
+         badfile 'empxt.bad'      
+         logfile 'empxt.log'      
+         fields terminated by ',' 
+          missing field values are null   
+         (id,name,hire_date char date_format date mask "yyyymmdd",job_id, sal, dept_id      
+         )      
+       )      
+       location ('emp.csv')      
+     )      
+	reject limit unlimited;
+
+-------------------------------------------------------------------
+
+select * from user_external_tables where table_name = 'EMPEXT';
+
+select * from user_external_locations where table_name = 'EMPEXT';
+
+-------------------------------------------------------------------
+
+select * from empext where hire_date like '2002%';
+
+--# external table에서 위와 아래는 같음 (external table은 수정,삭제 불가능. 무조건 읽기만 가능함. 성능안좋음(index 설계 못함))
+
+select * from empext 
+where hire_date  >= to_date('20020101','yyyymmdd')
+and hire_date < to_date('20030101','yyyymmdd');
+
+
+
+[107-1] kong.csv 파일의 데이터를 분석하려고 한다. external table를 생성하세요.
+
+[Answer]
+
+<DBA 계정>
+drop directory data_dir;
+create directory data_dir as 'c:\data\'; --create directory 디렉토리 이름 as '디렉토리의 실제 이름';
+select * from dba_directories where directory_name = 'DATA_DIR';
+grant read, write on directory data_dir to hr; --시스템 권한이 아니라 오브젝트 권한임, on directory 디렉토리 이름
+revoke read, write on directory data_dir from hr;
+
+
+<hr 계정>
+drop table kong purge;
+
+create table kong
+(em_id number, name varchar2(20), hire_date date, job_id varchar2(20), dept_id number)
+organization external
+(
+type oracle_loader
+default directory data_dir --default directory 디렉토리 이름
+access parameters
+(records delimited by newline --한 행씩 가지고 오는 명령문, record=row : 한 행이 끝나면 그것이 끝이 아니다. 뉴 라인을 가지고 와라
+badfile 'kong.bad' --얘 때문에 write권한이 필요한 것, 실패되는 record가 존재해야지만 만들어짐, 무조건 만들어지는 것 아님
+logfile 'kong.log' --record가 성공하면 여기에 넣어줘, 얘는 bad 파일과 다르게 무조건 만들어짐.
+fields terminated by ','
+missing field values are null --csv파일에서 중간에 값 하나 빠지면 null값으로 채워넣어줌
+(em_id, name, hire_date char date_format date mask "YYYYMMDD", job_id, dept_id) --hire_date는 char타입이야, date_format date mask "YYYYMMDD"
+)
+location('kong.csv')
+)
+reject limit unlimited; --필수로 넣기, 혹시 문제가 있는 애들은 reject(bad file로 떨어트리고)하고 다음으로 행으로 넘어가자.
+
+select * from kong;

@@ -1,0 +1,25 @@
+[109]
+emp 테이블을 생성한 후 통계정보를 확인 한 후 통계수집을 하세요.
+
+# 테이블을 직접 다 볼 수 없으니까 걸러서 볼 수 있는 기능 : view ('user_'로 시작되는 것들은 전부 view임)
+
+drop table emp purge;
+
+create table emp
+as select * from employees;
+
+***********************************************************************************
+
+SQL> drop table emp purge;
+
+SQL> create table emp as select * from employees; --데이터까지는 복제됬지만 시타스,제약조건은 복제안됨(?)
+
+SQL> exec dbms_stats.gather_table_stats('hr','emp', no_invalidate=>False)
+
+SQL> select num_rows, blocks, avg_row_len
+     from user_tables
+     where table_name = 'EMP';
+
+  NUM_ROWS     BLOCKS AVG_ROW_LEN
+---------- ---------- -----------
+       107          5          69

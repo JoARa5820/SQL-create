@@ -1,0 +1,70 @@
+[99]
+사원들 중에 근무연수가 15년 이상 이면서 급여는 10000이상 급여를 받는 사원들은 emp_1테이블에 사번, 이름, 입사일, 근무연수, 급여 정보를 입력하고
+      근무연수가 15년 이상 이면서 급여는 10000미만 급여를 받는 사원들은 emp_2테이블에 사번, 이름, 입사일, 근무연수, 급여 정보를 입력하세요.
+
+
+[Answer]
+
+create table emp_1(id number, name varchar2(30), day date, years number, sal number);
+create table emp_2(id number, name varchar2(30), day date, years number, sal number);
+
+insert into emp_1
+select employee_id, last_name, hire_date, months_between(sysdate,hire_date) / 12 day, salary
+from employees
+where months_between(sysdate,hire_date) / 12 >= 15
+and salary >= 10000;
+
+insert into emp_2
+select employee_id, last_name, hire_date, months_between(sysdate,hire_date) / 12 day, salary
+from employees
+where months_between(sysdate,hire_date) / 12 >= 15
+and salary < 10000;
+
+select * from emp_1;
+select * from emp_2;
+rollback;
+
+
+insert first
+when day >= 15 and salary >= 10000 then
+into emp_1(id,name,day,years,sal)
+values(employee_id,last_name,hire_date,day,salary)
+
+when day >= 15 and salary < 10000 then
+into emp_2(id,name,day,years,sal)
+values(employee_id,last_name,hire_date,day,salary)
+
+select employee_id, last_name, hire_date, months_between(sysdate,hire_date) / 12 day, salary
+from employees
+where months_between(sysdate,hire_date) / 12 > 15; --얘가 있기 때문에 when 앞에 day>=15 쓸 필요 없음, 설명을 위해 써놓음, 둘중 하나만 써도 됨
+
+select * from emp_1;
+select * from emp_2;
+rollback;
+
+----------------------------------------------------------------------------------------------
+
+insert first
+when day >= 15 and salary >= 10000 then
+into emp_1(id,name,day,years,sal) values(employee_id,last_name,hire_date,day,salary)
+when day >= 15 and salary < 10000 then
+into emp_2(id,name,day,years,sal) values(employee_id,last_name,hire_date,day,salary) --밸류절은 셀렉절에서 가져온다. // emp_2(~) : ~는 테이블 처음 만들었을때의 컬럼 이름들
+select employee_id, last_name, hire_date, months_between(sysdate,hire_date) / 12 day, salary
+from employees;
+
+select * from emp_1;
+select * from emp_2;
+rollback;
+
+insert first
+when salary >= 10000 then
+into emp_1(id,name,day,years,sal) values(employee_id,last_name,hire_date,day,salary)
+when salary < 10000 then
+into emp_2(id,name,day,years,sal) values(employee_id,last_name,hire_date,day,salary)
+select employee_id, last_name, hire_date, months_between(sysdate,hire_date) / 12 day, salary
+from employees
+where months_between(sysdate,hire_date) / 12 > 15;
+
+select * from emp_1;
+select * from emp_2;
+rollback;

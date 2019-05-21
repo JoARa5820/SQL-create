@@ -1,0 +1,10 @@
+[100]
+EMPLOYEES 테이블을 복제 EMP_COPY 이름으로 복제하세요.
+
+[Answer]
+create table emp_copy
+as select * from hr.employees;
+
+select * from emp_copy;
+
+--# not null 제약조건은 열 정의이므로 낫널조건만 복제됨 

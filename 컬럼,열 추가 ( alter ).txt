@@ -1,0 +1,6 @@
+[102]
+EMP_COPY 테이블에 department_name varchar2(30) 컬럼을 추가하세요.
+
+[Answer]
+
+alter table emp_copy add(department_name varchar2(30));

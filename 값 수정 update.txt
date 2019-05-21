@@ -1,0 +1,16 @@
+[103]
+DEPARTMENTS 테이블에 있는 department_name을 기준으로 EMP_COPY 테이블에 department_name에 값을 수정하세요.
+             단 UPDATE문을 이용해서 해결한 후 수정된 정보를 확인하고 ROLLBACK 하세요. --# 부서이름 수정 문제
+
+--# 상호관련 서브쿼리 사용해서 업데이트 작업
+
+[Answer]
+
+update emp_copy e
+set department_name = (select department_name
+                       from departments d
+        	             where e.department_id = d.department_id);	
+
+select department_id, department_name from emp_copy;
+
+rollback;
